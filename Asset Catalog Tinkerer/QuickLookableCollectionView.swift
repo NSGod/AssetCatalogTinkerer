@@ -35,7 +35,7 @@ class QuickLookableCollectionView: NSCollectionView {
     @IBAction func showQuickLookPreview(_ sender: AnyObject) {
         guard selectionIndexPaths.count > 0 else { return }
         
-        quickLookHandler.pasteboard = NSPasteboard(name: "CollectionViewQuickLook")
+        quickLookHandler.pasteboard = NSPasteboard(name: convertToNSPasteboardName("CollectionViewQuickLook"))
         quickLookHandler.collectionView = self
         
         let panel = QLPreviewPanel.shared()
@@ -77,9 +77,9 @@ class QuickLookableCollectionView: NSCollectionView {
     var collectionView: QuickLookableCollectionView!
     
     var previewItems: [URL] {
-        guard let items = pasteboard.propertyList(forType: NSFilenamesPboardType) as? [String] else { return [] }
+        guard let items = pasteboard.propertyList(forType: NSPasteboard.PasteboardType(kUTTypeFileURL as String)) as? [URL] else { return [] }
         
-        return items.map { URL(fileURLWithPath: $0) }
+        return items
     }
     
     @objc fileprivate func numberOfPreviewItems(in panel: QLPreviewPanel!) -> Int {
@@ -89,11 +89,11 @@ class QuickLookableCollectionView: NSCollectionView {
     @objc fileprivate func previewPanel(_ panel: QLPreviewPanel!, previewItemAt index: Int) -> QLPreviewItem! {
         guard previewItems.count > 0 else { return nil }
         
-        return previewItems[index] as QLPreviewItem!
+        return previewItems[index] as QLPreviewItem
     }
     
     @objc fileprivate func previewPanel(_ panel: QLPreviewPanel!, handle event: NSEvent!) -> Bool {
-        if event.type == NSEventType.keyDown {
+        if event.type == .keyDown {
             collectionView.keyDown(with: event)
             return true
         }
@@ -111,4 +111,14 @@ class QuickLookableCollectionView: NSCollectionView {
         return rect ?? NSZeroRect
     }
     
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSPasteboardName(_ input: String) -> NSPasteboard.Name {
+	return NSPasteboard.Name(rawValue: input)
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSPasteboardPasteboardType(_ input: String) -> NSPasteboard.PasteboardType {
+	return NSPasteboard.PasteboardType(rawValue: input)
 }

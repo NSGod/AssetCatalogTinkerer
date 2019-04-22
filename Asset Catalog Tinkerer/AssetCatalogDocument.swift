@@ -18,7 +18,7 @@ class AssetCatalogDocument: NSDocument {
         // Add your subclass-specific initialization here.
     }
 
-    override class func autosavesInPlace() -> Bool {
+    override class var autosavesInPlace: Bool {
         return true
     }
 
@@ -32,7 +32,7 @@ class AssetCatalogDocument: NSDocument {
             windowController.window?.tabbingMode = .preferred
         }
         
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.NSWindowWillClose, object: windowController.window, queue: OperationQueue.main) { _ in
+        NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: windowController.window, queue: OperationQueue.main) { _ in
             if self.reader != nil { self.reader.cancelReading() }
         }
     }

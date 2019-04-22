@@ -33,7 +33,7 @@ class DocumentController: NSDocumentController {
         openPanel.treatsFilePackagesAsDirectories = true
         openPanel.accessoryView = makeSettingsView()
         
-        return openPanel.runModal()
+        return openPanel.runModal().rawValue
     }
     
 }

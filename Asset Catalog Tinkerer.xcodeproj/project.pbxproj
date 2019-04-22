@@ -445,7 +445,7 @@
 					DDC06B711CA8BCF300B6A9F3 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = M72QZ9W58G;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 1010;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -785,7 +785,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Asset Catalog Tinkerer/Asset Catalog Tinkerer-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -807,7 +808,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "br.com.guilhermerambo.Asset-Catalog-Tinkerer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Asset Catalog Tinkerer/Asset Catalog Tinkerer-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
