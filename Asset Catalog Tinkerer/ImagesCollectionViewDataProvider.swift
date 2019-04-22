@@ -71,7 +71,7 @@ class ImagesCollectionViewDataProvider: NSObject, NSCollectionViewDataSource, NS
     func collectionView(_ collectionView: NSCollectionView, writeItemsAt indexPaths: Set<IndexPath>, to pasteboard: NSPasteboard) -> Bool {
         pasteboard.clearContents()
         
-        let images: [String?] = indexPaths.map { indexPath in
+        let images: [URL?] = indexPaths.map { indexPath in
             let index = (indexPath as NSIndexPath).item
             
             guard let filename = self.filteredImages[index]["filename"] as? String else { return nil }
@@ -80,12 +80,12 @@ class ImagesCollectionViewDataProvider: NSObject, NSCollectionViewDataSource, NS
             
             guard (try? data.write(to: tempURL, options: [.atomic])) != nil else { return nil }
             
-            return tempURL.path
+            return tempURL
         }
         
-        let validImages: [String] = images.filter { $0 != nil }.map { $0! }
-        
-        pasteboard.setPropertyList(validImages, forType: NSPasteboard.PasteboardType(kUTTypeFileURL as String))
+		let validImages: [NSURL] = images.filter { $0 != nil }.map { $0! as NSURL }
+
+		pasteboard.writeObjects(validImages)
         
         return true
     }

@@ -35,7 +35,7 @@ class QuickLookableCollectionView: NSCollectionView {
     @IBAction func showQuickLookPreview(_ sender: AnyObject) {
         guard selectionIndexPaths.count > 0 else { return }
         
-        quickLookHandler.pasteboard = NSPasteboard(name: convertToNSPasteboardName("CollectionViewQuickLook"))
+        quickLookHandler.pasteboard = NSPasteboard(name: NSPasteboard.Name("CollectionViewQuickLook"))
         quickLookHandler.collectionView = self
         
         let panel = QLPreviewPanel.shared()
@@ -77,7 +77,7 @@ class QuickLookableCollectionView: NSCollectionView {
     var collectionView: QuickLookableCollectionView!
     
     var previewItems: [URL] {
-        guard let items = pasteboard.propertyList(forType: NSPasteboard.PasteboardType(kUTTypeFileURL as String)) as? [URL] else { return [] }
+		guard let items = pasteboard.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL] else { return [] }
         
         return items
     }
