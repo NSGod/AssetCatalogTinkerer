@@ -65,7 +65,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
     self.cancelled = true;
 }
 
-- (void)resourceConstrainedReadWithMaxCount:(int)max completionHandler:(void (^)())callback
+- (void)resourceConstrainedReadWithMaxCount:(int)max completionHandler:(void (^)(void))callback
 {
     self.resourceConstrained = YES;
     self.maxCount = max;
@@ -73,7 +73,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
     [self readWithCompletionHandler:callback progressHandler:nil];
 }
 
-- (void)readWithCompletionHandler:(void (^__nonnull)())callback progressHandler:(void (^__nullable)(double progress))progressCallback
+- (void)readWithCompletionHandler:(void (^__nonnull)(void))callback progressHandler:(void (^__nullable)(double progress))progressCallback
 {
     __block uint64 totalItemCount = 0;
     __block uint64 loadedItemCount = 0;
@@ -224,7 +224,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
     });
 }
 
-- (void)readThemeStoreWithCompletionHandler:(void (^__nonnull)())callback progressHandler:(void (^__nullable)(double progress))progressCallback
+- (void)readThemeStoreWithCompletionHandler:(void (^__nonnull)(void))callback progressHandler:(void (^__nullable)(double progress))progressCallback
 {
     uint64 realTotalItemCount = [self.catalog _themeStore].themeStore.allAssetKeys.count;
     __block uint64 loadedItemCount = 0;
