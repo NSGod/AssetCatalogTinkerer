@@ -452,10 +452,9 @@
 			};
 			buildConfigurationList = DDC06B6D1CA8BCF300B6A9F3 /* Build configuration list for PBXProject "Asset Catalog Tinkerer" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
