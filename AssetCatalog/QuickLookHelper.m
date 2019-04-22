@@ -70,7 +70,7 @@
 - (void)generatePreview
 {
     [self.reader resourceConstrainedReadWithMaxCount:kMaxNumberOfAssets completionHandler:^{
-        _isFinished = YES;
+		self->_isFinished = YES;
     }];
 }
 

@@ -134,13 +134,13 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
             return [self readThemeStoreWithCompletionHandler:callback progressHandler:progressCallback];
         }
         
-        _totalNumberOfAssets = self.catalog.allImageNames.count;
+		self->_totalNumberOfAssets = self.catalog.allImageNames.count;
         
         // limits the total items to be read to the total number of images or the max count set for a resource constrained read
-        totalItemCount = _resourceConstrained ? MIN(maxItemCount, _catalog.allImageNames.count) : _catalog.allImageNames.count;
+		totalItemCount = self->_resourceConstrained ? MIN(maxItemCount, self->_catalog.allImageNames.count) : self->_catalog.allImageNames.count;
         
         for (NSString *imageName in self.catalog.allImageNames) {
-            if (_resourceConstrained && loadedItemCount >= totalItemCount) break;
+			if (self->_resourceConstrained && loadedItemCount >= totalItemCount) break;
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 double loadedFraction = (double)loadedItemCount / (double)totalItemCount;
@@ -184,7 +184,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
                     }
                     
                     // when resource constrained and the catalog contains retina images, only load retina images
-                    if ([self catalogHasRetinaContent] && _resourceConstrained && namedImage.scale < 2) {
+					if ([self catalogHasRetinaContent] && self->_resourceConstrained && namedImage.scale < 2) {
                         continue;
                     }
                     
@@ -235,7 +235,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
     _totalNumberOfAssets = [self.catalog _themeStore].themeStore.allAssetKeys.count;
     
     [[self.catalog _themeStore].themeStore.allAssetKeys enumerateObjectsWithOptions:0 usingBlock:^(CUIRenditionKey * _Nonnull key, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (_resourceConstrained && loadedItemCount >= totalItemCount) return;
+		if (self->_resourceConstrained && loadedItemCount >= totalItemCount) return;
         
         if (self.cancelled) return;
         
@@ -248,7 +248,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
             CUIThemeRendition *rendition = [[self.catalog _themeStore] renditionWithKey:key.keyList];
             
             // when resource constrained and the catalog contains retina images, only load retina images
-            if ([self catalogHasRetinaContent] && _resourceConstrained && rendition.scale < 2) {
+			if ([self catalogHasRetinaContent] && self->_resourceConstrained && rendition.scale < 2) {
                 return;
             }
             
