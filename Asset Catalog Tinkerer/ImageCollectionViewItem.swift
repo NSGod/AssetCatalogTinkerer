@@ -166,7 +166,7 @@ class ImageCollectionViewItem: NSCollectionViewItem {
         guard let imageData = image , isViewLoaded else { return }
         guard let image = imageData["thumbnail"] as? NSImage else { return }
         let name = imageData["name"] as! String
-        let filename = imageData["filename"] as! String
+        let filename = imageData["filename"] as? String
         let type = imageData["pdf"] != nil ? "PDF" : (imageData["png"] != nil ? "PNG" : "?")
         
         let brightness = image.averageBrightness()
