@@ -12,7 +12,7 @@ class ImagesCollectionViewDataProvider: NSObject, NSCollectionViewDataSource, NS
     
     fileprivate struct Constants {
         static let nibName = "ImageCollectionViewItem"
-        static let imageItemIdentifier = "ImageItemIdentifier"
+        static let imageItemIdentifier = NSUserInterfaceItemIdentifier("ImageItemIdentifier")
     }
     
     var collectionView: NSCollectionView! {
@@ -25,7 +25,7 @@ class ImagesCollectionViewDataProvider: NSObject, NSCollectionViewDataSource, NS
             collectionView.collectionViewLayout = GridLayout()
             
             let nib = NSNib(nibNamed: Constants.nibName, bundle: nil)
-            collectionView.register(nib, forItemWithIdentifier: convertToNSUserInterfaceItemIdentifier(Constants.imageItemIdentifier))
+            collectionView.register(nib, forItemWithIdentifier: Constants.imageItemIdentifier)
         }
     }
     
@@ -57,7 +57,7 @@ class ImagesCollectionViewDataProvider: NSObject, NSCollectionViewDataSource, NS
     }
     
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        let item = collectionView.makeItem(withIdentifier: convertToNSUserInterfaceItemIdentifier(Constants.imageItemIdentifier), for: indexPath) as! ImageCollectionViewItem
+        let item = collectionView.makeItem(withIdentifier: Constants.imageItemIdentifier, for: indexPath) as! ImageCollectionViewItem
         
         item.image = filteredImages[(indexPath as NSIndexPath).item]
         
@@ -86,13 +86,8 @@ class ImagesCollectionViewDataProvider: NSObject, NSCollectionViewDataSource, NS
 		let validImages: [NSURL] = images.filter { $0 != nil }.map { $0! as NSURL }
 
 		pasteboard.writeObjects(validImages)
-        
+
         return true
     }
     
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToNSUserInterfaceItemIdentifier(_ input: String) -> NSUserInterfaceItemIdentifier {
-	return NSUserInterfaceItemIdentifier(rawValue: input)
 }

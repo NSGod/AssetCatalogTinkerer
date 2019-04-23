@@ -112,13 +112,3 @@ class QuickLookableCollectionView: NSCollectionView {
     }
     
 }
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToNSPasteboardName(_ input: String) -> NSPasteboard.Name {
-	return NSPasteboard.Name(rawValue: input)
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToNSPasteboardPasteboardType(_ input: String) -> NSPasteboard.PasteboardType {
-	return NSPasteboard.PasteboardType(rawValue: input)
-}
