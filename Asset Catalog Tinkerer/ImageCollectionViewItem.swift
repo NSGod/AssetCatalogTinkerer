@@ -167,14 +167,24 @@ class ImageCollectionViewItem: NSCollectionViewItem {
         guard let image = imageData["thumbnail"] as? NSImage else { return }
         let name = imageData["name"] as! String
         let filename = imageData["filename"] as? String
-        let type = imageData["pdf"] != nil ? "PDF" : (imageData["png"] != nil ? "PNG" : "?")
-        
+
         let brightness = image.averageBrightness()
         
         catalogImageView.image = image
         nameLabel.stringValue = name
-        typeView.stringValue = type
         view.toolTip = filename
+
+        if imageData["png"] != nil {
+            typeView.stringValue = "PNG"
+            typeView.backgroundColor = .systemBlue
+        } else if imageData["pdf"] != nil {
+            typeView.stringValue = "PDF"
+            typeView.backgroundColor = .systemRed
+        } else {
+            typeView.stringValue = "?"
+            typeView.backgroundColor = .systemGray
+
+        }
         
         if Preferences.shared[.debugImageBrightness] {
             brightnessDebugLabel.stringValue = String(format: "B: %.1f", brightness)
