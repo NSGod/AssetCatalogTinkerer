@@ -51,7 +51,7 @@ class ImageCollectionViewItem: NSCollectionViewItem {
         }
         static var selectedBorder: NSColor {
             if #available(macOS 10.14, *) {
-                return NSColor.controlAccentColor.shadow(withLevel: 0.2)!
+                return NSColor.controlAccentColor.shadow(withLevel: 0.3)!
             } else {
                 return NSColor(calibratedRed:0.019, green:0.316, blue:0.687, alpha:1)
             }
@@ -103,6 +103,17 @@ class ImageCollectionViewItem: NSCollectionViewItem {
         
         return l
     }()
+
+    fileprivate lazy var typeView: NSTextField = {
+        let l = NSTextField.makeLabel()
+
+        l.font = NSFont.systemFont(ofSize: 11.0, weight: .bold)
+        l.textColor = Colors.selectedText
+        l.backgroundColor = .gray
+        l.drawsBackground = true
+
+        return l
+    }()
     
     fileprivate lazy var brightnessDebugLabel: NSTextField = {
         let l = NSTextField.makeLabel()
@@ -137,6 +148,10 @@ class ImageCollectionViewItem: NSCollectionViewItem {
         nameLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -2.0).isActive = true
         nameLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         nameLabel.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 1.0, constant: -12.0).isActive = true
+
+        view.addSubview(typeView)
+        typeView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0.0).isActive = true
+        typeView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0.0).isActive = true
     }
     
     private func installBrightnessDebugLabelIfNeeded() {
@@ -152,11 +167,13 @@ class ImageCollectionViewItem: NSCollectionViewItem {
         guard let image = imageData["thumbnail"] as? NSImage else { return }
         let name = imageData["name"] as! String
         let filename = imageData["filename"] as! String
+        let type = imageData["pdf"] != nil ? "PDF" : (imageData["png"] != nil ? "PNG" : "?")
         
         let brightness = image.averageBrightness()
         
         catalogImageView.image = image
         nameLabel.stringValue = name
+        typeView.stringValue = type
         view.toolTip = filename
         
         if Preferences.shared[.debugImageBrightness] {
