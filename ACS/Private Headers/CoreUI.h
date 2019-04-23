@@ -92,6 +92,17 @@ struct _renditionkeytoken {
 
 @end
 
+struct _csicolor {
+    unsigned int tag; // 'COLR'
+    unsigned int _field2;
+    unsigned int :8;
+    unsigned int :3;
+    unsigned int :21;
+    unsigned int componentCount;
+    double components[];
+};
+
+
 @interface CUIThemeRendition: NSObject
 
 @property (nonatomic, readonly) CGFloat scale;
@@ -99,6 +110,8 @@ struct _renditionkeytoken {
 @property (nonatomic, readonly) NSData *data;
 @property (nonatomic, readonly) CGImageRef unslicedImage;
 @property (nonatomic, readonly) CGPDFDocumentRef pdfDocument;
+@property (nonatomic, readonly) const struct _csicolor *csiColor;
+@property (nonatomic, readonly) unsigned long long colorSpaceID;
 
 @end
 

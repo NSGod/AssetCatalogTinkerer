@@ -285,7 +285,64 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
                 if (self.cancelled) return;
 
                 [self.mutableImages addObject:desc];
+            } else if (rendition.csiColor) {
+                const struct _csicolor *csiColor = rendition.csiColor;
+                printf("color: %s\n", rendition.name.UTF8String);
+                printf("    color space id: %llu\n", rendition.colorSpaceID); // 15 = sRGB or gamma 2.2 grayscale
+                printf("    field1: %x\n", csiColor->tag);
+                printf("    field2: %u\n", csiColor->_field2);
+                unsigned count = csiColor->componentCount;
+                printf("    component count: %u\n", count);
 
+                for (unsigned i = 0; i < count; ++i)
+                    printf("        component: %u = %.2f\n", i, csiColor->components[i]);
+
+                NSColor *color;
+
+                if (count == 4) { // RGBA
+                    color = [NSColor colorWithRed:csiColor->components[0] green:csiColor->components[1] blue:csiColor->components[2] alpha:csiColor->components[3]];
+                } else if (count == 2) { // grayscale w/alpha
+                    color = [NSColor colorWithWhite:csiColor->components[0] alpha:csiColor->components[1]];
+                }
+
+                if (!color)
+                    return;
+
+                NSSize size = (NSSize){ 32.0, 32.0 };
+
+                NSImage *thumbnail = [NSImage imageWithSize:size flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+                    NSBezierPath *topLeftTriangle = [NSBezierPath bezierPath];
+                    [topLeftTriangle moveToPoint:NSZeroPoint];
+                    [topLeftTriangle lineToPoint:(NSPoint){ 0.0, size.height }];
+                    [topLeftTriangle lineToPoint:(NSPoint){ size.width, size.height }];
+                    [topLeftTriangle closePath];
+                    [NSColor.blackColor set];
+                    [topLeftTriangle fill];
+
+                    NSBezierPath *bottomRightTriangle = [NSBezierPath bezierPath];
+                    [bottomRightTriangle moveToPoint:NSZeroPoint];
+                    [bottomRightTriangle lineToPoint:(NSPoint){ size.width, size.height }];
+                    [bottomRightTriangle lineToPoint:(NSPoint){ size.width, 0.0 }];
+                    [bottomRightTriangle closePath];
+                    [NSColor.whiteColor set];
+                    [bottomRightTriangle fill];
+
+
+                    NSRect rect = (NSRect){ NSZeroPoint, size };
+                    [color set];
+                    NSRectFillUsingOperation(rect, NSCompositingOperationSourceOver);
+                    [[NSColor colorWithWhite:0.0 alpha:0.5] set];
+                    NSFrameRectWithWidthUsingOperation(rect, 1.0, NSCompositingOperationSourceOver);
+                    return YES;
+                }];
+
+                NSDictionary *desc = @{
+                                       kACSNameKey: rendition.name,
+                                       kACSThumbnailKey: thumbnail,
+                                       kACSFilenameKey: @""
+                                       };
+
+                [self.mutableImages addObject:desc];
             } else {
                 NSLog(@"The rendition %@ doesn't have an image, It is probably an effect or material.", rendition.name);
             }
