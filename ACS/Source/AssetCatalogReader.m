@@ -275,7 +275,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
                 filename = [self filenameForAssetNamed:[self cleanupRenditionName:rendition.name] extension:@"pdf" scale:rendition.scale presentationState:key.themeState];
 
                 CGPDFDocumentRef pdfDocument = rendition.pdfDocument;
-                NSDictionary *desc = [self pdfDescriptionWithName:rendition.name filename:filename pdfDocument:pdfDocument];
+                NSDictionary *desc = [self imageDescriptionWithName:rendition.name filename:filename pdfDocument:pdfDocument];
 
                 if (!desc) {
                     loadedItemCount++;
@@ -326,7 +326,6 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
                     [bottomRightTriangle closePath];
                     [NSColor.whiteColor set];
                     [bottomRightTriangle fill];
-
 
                     NSRect rect = (NSRect){ NSZeroPoint, size };
                     [color set];
@@ -448,7 +447,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
     }
 }
 
-- (NSDictionary *)pdfDescriptionWithName:(NSString *)name filename:(NSString *)filename pdfDocument:(CGPDFDocumentRef)pdfDocument
+- (NSDictionary *)imageDescriptionWithName:(NSString *)name filename:(NSString *)filename pdfDocument:(CGPDFDocumentRef)pdfDocument
 {
     if (_resourceConstrained) {
         return @{};
