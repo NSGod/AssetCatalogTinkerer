@@ -20,16 +20,7 @@ class QuickLookableCollectionView: NSCollectionView {
         
         super.keyDown(with: theEvent)
     }
-    
-    func collectionView(_ collectionView: NSCollectionView, didSelectItemsAtIndexPaths indexPaths: Set<IndexPath>) {
-        delegate?.collectionView?(self, didSelectItemsAt: indexPaths)
-        
-        guard QLPreviewPanel.sharedPreviewPanelExists() && QLPreviewPanel.shared().isVisible else { return }
-        
-        writeSelectionToQuickLookPasteboard()
-        QLPreviewPanel.shared().reloadData()
-    }
-    
+
     fileprivate lazy var quickLookHandler = QuickLookableCollectionViewPreviewHandler()
     
     @IBAction func showQuickLookPreview(_ sender: AnyObject) {
@@ -64,7 +55,7 @@ class QuickLookableCollectionView: NSCollectionView {
         panel.dataSource = nil
     }
     
-    fileprivate func writeSelectionToQuickLookPasteboard() {
+    func writeSelectionToQuickLookPasteboard() {
         quickLookHandler.pasteboard.clearContents()
         _ = delegate?.collectionView?(self, writeItemsAt: selectionIndexPaths, to: quickLookHandler.pasteboard)
     }

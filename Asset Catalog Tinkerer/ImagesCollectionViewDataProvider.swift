@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import Quartz
 
 class ImagesCollectionViewDataProvider: NSObject, NSCollectionViewDataSource, NSCollectionViewDelegate {
     
@@ -90,5 +91,12 @@ class ImagesCollectionViewDataProvider: NSObject, NSCollectionViewDataSource, NS
 
         return true
     }
-    
+
+
+    func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
+        guard QLPreviewPanel.sharedPreviewPanelExists() && QLPreviewPanel.shared().isVisible else { return }
+
+        (collectionView as! QuickLookableCollectionView).writeSelectionToQuickLookPasteboard()
+        QLPreviewPanel.shared().reloadData()
+    }
 }
