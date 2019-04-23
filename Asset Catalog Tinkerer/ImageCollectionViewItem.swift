@@ -39,7 +39,7 @@ class ImageCollectionViewItem: NSCollectionViewItem {
     }
     
     fileprivate struct Colors {
-        static let background = NSColor.white
+        static let background = NSColor(calibratedWhite: 0.9, alpha: 1.0)
         static let brightImageBackground = NSColor(calibratedWhite: 0.9, alpha: 1)
         static let border = NSColor(calibratedWhite: 0.9, alpha: 1.0)
         static var selectedBackground: NSColor {
