@@ -57,7 +57,11 @@ class ImagesViewController: NSViewController {
         let p = ProgressBar(frame: NSZeroRect)
         
         p.translatesAutoresizingMaskIntoConstraints = false
-        p.tintColor = NSColor(calibratedRed:0, green:0.495, blue:1, alpha:1)
+        if #available(macOS 10.14, *) {
+            p.tintColor = NSColor.controlAccentColor
+        } else {
+            p.tintColor = NSColor(calibratedRed:0, green:0.495, blue:1, alpha:1)
+        }
         p.progress = 0.0
         
         return p

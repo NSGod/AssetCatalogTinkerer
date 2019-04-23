@@ -42,9 +42,27 @@ class ImageCollectionViewItem: NSCollectionViewItem {
         static let background = NSColor.white
         static let brightImageBackground = NSColor(calibratedWhite: 0.9, alpha: 1)
         static let border = NSColor(calibratedWhite: 0.9, alpha: 1.0)
-        static let selectedBackground = NSColor(calibratedRed:0, green:0.496, blue:1, alpha:1)
-        static let selectedBorder = NSColor(calibratedRed:0.019, green:0.316, blue:0.687, alpha:1)
-        static let text = NSColor(calibratedRed:0, green:0.496, blue:1, alpha:1)
+        static var selectedBackground: NSColor {
+            if #available(macOS 10.14, *) {
+                return NSColor.controlAccentColor
+            } else {
+                return NSColor(calibratedRed:0, green:0.496, blue:1, alpha:1)
+            }
+        }
+        static var selectedBorder: NSColor {
+            if #available(macOS 10.14, *) {
+                return NSColor.controlAccentColor.shadow(withLevel: 0.2)!
+            } else {
+                return NSColor(calibratedRed:0.019, green:0.316, blue:0.687, alpha:1)
+            }
+        }
+        static var text: NSColor {
+            if #available(macOS 10.14, *) {
+                return NSColor.controlAccentColor
+            } else {
+                return NSColor(calibratedRed:0, green:0.496, blue:1, alpha:1)
+            }
+        }
         static let selectedText = NSColor.white
     }
     
