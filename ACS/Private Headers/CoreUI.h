@@ -8,13 +8,18 @@
 
 #import <Cocoa/Cocoa.h>
 
+@interface CUINamedLookup : NSObject
+
+@property (copy, nonatomic) NSString *name;
+
+@end
+
 @interface CUINamedData : NSObject
 
 @end
 
-@interface CUINamedImage : NSObject
+@interface CUINamedImage : CUINamedLookup
 
-@property (copy, nonatomic) NSString *name;
 @property (readonly, nonatomic) int exifOrientation;
 @property (readonly, nonatomic) BOOL isStructured;
 @property (readonly, nonatomic) NSInteger templateRenderingMode;
@@ -30,6 +35,17 @@
 @property (readonly, nonatomic) CGImageRef image;
 
 @end
+
+@interface CUINamedVectorImage : CUINamedLookup
+
+- (CGImageRef)rasterizeImageUsingScaleFactor:(double)arg1 forTargetSize:(struct CGSize)arg2;
+@property(readonly, nonatomic) long long layoutDirection;
+@property(readonly, nonatomic) long long displayGamut;
+@property(readonly, nonatomic) double scale;
+@property(readonly, nonatomic) struct CGPDFDocument *pdfDocument;
+
+@end
+
 
 #define kCoreThemeStateNone -1
 
@@ -82,6 +98,7 @@ struct _renditionkeytoken {
 @property (nonatomic, readonly) NSString *name;
 @property (nonatomic, readonly) NSData *data;
 @property (nonatomic, readonly) CGImageRef unslicedImage;
+@property (nonatomic, readonly) CGPDFDocumentRef pdfDocument;
 
 @end
 
@@ -127,7 +144,7 @@ struct _renditionkeytoken {
 
 @property (nonatomic, readonly) NSArray *allImageNames;
 - (CUINamedImage *)imageWithName:(NSString *)name scaleFactor:(CGFloat)scaleFactor;
-
+- (CGPDFDocumentRef)pdfDocumentWithName:(NSString *)name;
 
 - (CUIStructuredThemeStore *)_themeStore;
 

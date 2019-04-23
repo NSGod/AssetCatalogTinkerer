@@ -299,10 +299,10 @@ class ImagesViewController: NSViewController {
                 
                 pathComponents.append(filename)
                 
-                guard let pngData = image["png"] as? Data else { return }
-                
+                guard let data = (image["png"] ?? image["pdf"]) as? Data else { return }
+
                 let path = NSString.path(withComponents: pathComponents) as String
-                if !((try? pngData.write(to: URL(fileURLWithPath: path), options: [.atomic])) != nil) {
+                if !((try? data.write(to: URL(fileURLWithPath: path), options: [.atomic])) != nil) {
                     NSLog("ERROR: Unable to write \(filename) to \(path)")
                 }
             }

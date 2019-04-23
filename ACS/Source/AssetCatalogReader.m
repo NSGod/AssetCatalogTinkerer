@@ -16,6 +16,7 @@ NSString * const kACSImageKey = @"image";
 NSString * const kACSThumbnailKey = @"thumbnail";
 NSString * const kACSFilenameKey = @"filename";
 NSString * const kACSPNGDataKey = @"png";
+NSString * const kACSPDFDataKey = @"pdf";
 NSString * const kACSImageRepKey = @"imagerep";
 
 NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetCatalogReader";
@@ -174,7 +175,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
                         filename = [NSString stringWithFormat:@"%@.png", namedImage.name];
                         image = stack.flattenedImage;
                     } else {
-                        filename = [self filenameForAssetNamed:namedImage.name scale:namedImage.scale presentationState:kCoreThemeStateNone];
+                        filename = [self filenameForAssetNamed:namedImage.name extension:@"png" scale:namedImage.scale presentationState:kCoreThemeStateNone];
                         image = namedImage.image;
                     }
                     
@@ -252,7 +253,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
                 return;
             }
             
-            NSString *filename = [self filenameForAssetNamed:[self cleanupRenditionName:rendition.name] scale:rendition.scale presentationState:key.themeState];
+            NSString *filename = [self filenameForAssetNamed:[self cleanupRenditionName:rendition.name] extension:@"png" scale:rendition.scale presentationState:key.themeState];
             
             if (rendition.unslicedImage) {
                 NSBitmapImageRep *imageRep = [[NSBitmapImageRep alloc] initWithCGImage:rendition.unslicedImage];
@@ -270,6 +271,21 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
                 if (self.cancelled) return;
                 
                 [self.mutableImages addObject:desc];
+            } else if (rendition.pdfDocument) {
+                filename = [self filenameForAssetNamed:[self cleanupRenditionName:rendition.name] extension:@"pdf" scale:rendition.scale presentationState:key.themeState];
+
+                CGPDFDocumentRef pdfDocument = rendition.pdfDocument;
+                NSDictionary *desc = [self pdfDescriptionWithName:rendition.name filename:filename pdfDocument:pdfDocument];
+
+                if (!desc) {
+                    loadedItemCount++;
+                    return;
+                }
+
+                if (self.cancelled) return;
+
+                [self.mutableImages addObject:desc];
+
             } else {
                 NSLog(@"The rendition %@ doesn't have an image, It is probably an effect or material.", rendition.name);
             }
@@ -375,6 +391,40 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
     }
 }
 
+- (NSDictionary *)pdfDescriptionWithName:(NSString *)name filename:(NSString *)filename pdfDocument:(CGPDFDocumentRef)pdfDocument
+{
+    if (_resourceConstrained) {
+        return @{};
+    } else {
+        CGPDFPageRef firstPage = CGPDFDocumentGetPage(pdfDocument, 1);
+
+        if (!firstPage)
+            return @{};
+
+        NSMutableData *mutableData = [NSMutableData data];
+        CGDataConsumerRef consumer = CGDataConsumerCreateWithCFData((CFMutableDataRef)mutableData);
+
+        CGRect mediaBox = CGPDFPageGetBoxRect(firstPage, kCGPDFMediaBox);
+        CGContextRef context = CGPDFContextCreate(consumer, &mediaBox, NULL);
+        CGContextBeginPage(context, &mediaBox);
+        CGContextDrawPDFPage(context, firstPage);
+        CGContextEndPage(context);
+        CGPDFContextClose(context);
+
+        NSImage *originalImage = [[NSImage alloc] initWithData:mutableData];
+        NSImage *thumbnail = [self constrainImage:originalImage toSize:self.thumbnailSize];
+
+        return @{
+                 kACSNameKey: name,
+                 kACSPDFDataKey: mutableData,
+                 kACSFilenameKey: filename,
+                 kACSThumbnailKey: thumbnail,
+                 };
+    }
+
+    return @{};
+}
+
 - (NSString *)cleanupRenditionName:(NSString *)name
 {
     NSArray *components = [name.stringByDeletingPathExtension componentsSeparatedByString:@"@"];
@@ -382,19 +432,23 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
     return components.firstObject;
 }
 
-- (NSString *)filenameForAssetNamed:(NSString *)name scale:(CGFloat)scale presentationState:(NSInteger)presentationState
+- (NSString *)filenameForAssetNamed:(NSString *)name extension:(NSString *)extension scale:(CGFloat)scale presentationState:(NSInteger)presentationState
 {
+
+    if (!extension)
+        extension = @"png";
+
     if (scale > 1.0) {
         if (presentationState != kCoreThemeStateNone) {
-            return [NSString stringWithFormat:@"%@_%@@%.0fx.png", name, themeStateNameForThemeState(presentationState), scale];
+            return [NSString stringWithFormat:@"%@_%@@%.0fx.%@", name, themeStateNameForThemeState(presentationState), scale, extension];
         } else {
-            return [NSString stringWithFormat:@"%@@%.0fx.png", name, scale];
+            return [NSString stringWithFormat:@"%@@%.0fx.%@", name, scale, extension];
         }
     } else {
         if (presentationState != kCoreThemeStateNone) {
-            return [NSString stringWithFormat:@"%@_%@.png", name, themeStateNameForThemeState(presentationState)];
+            return [NSString stringWithFormat:@"%@_%@.%@", name, themeStateNameForThemeState(presentationState), extension];
         } else {
-            return [NSString stringWithFormat:@"%@.png", name];
+            return [NSString stringWithFormat:@"%@.%@", name, extension];
         }
     }
 }

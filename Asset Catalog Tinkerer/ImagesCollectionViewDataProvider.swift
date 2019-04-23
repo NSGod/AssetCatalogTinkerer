@@ -73,9 +73,10 @@ class ImagesCollectionViewDataProvider: NSObject, NSCollectionViewDataSource, NS
         
         let images: [URL?] = indexPaths.map { indexPath in
             let index = (indexPath as NSIndexPath).item
-            
-            guard let filename = self.filteredImages[index]["filename"] as? String else { return nil }
-            guard let data = self.filteredImages[index]["png"] as? Data else { return nil }
+
+            let image = self.filteredImages[index]
+            guard let filename = image["filename"] as? String else { return nil }
+            guard let data = (image["png"] ?? image["pdf"]) as? Data else { return nil }
             let tempURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())\(filename)")
             
             guard (try? data.write(to: tempURL, options: [.atomic])) != nil else { return nil }
