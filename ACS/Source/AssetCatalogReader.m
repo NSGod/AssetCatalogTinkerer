@@ -432,15 +432,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
 
 - (NSDictionary *)imageDescriptionWithName:(NSString *)name csiColor:(const struct _csicolor *)csiColor colorSpaceID:(unsigned long long)colorSpaceID
 {
-//    printf("color: %s\n", name.UTF8String);
-//    printf("    color space id: %llu\n", colorSpaceID); // 15 = sRGB or gamma 2.2 grayscale
-//    printf("    tag: %x\n", csiColor->tag);
-//    printf("    field2: %u\n", csiColor->_field2);
     unsigned count = csiColor->componentCount;
-//    printf("    component count: %u\n", count);
-//
-//    for (unsigned i = 0; i < count; ++i)
-//        printf("        component: %u = %.2f\n", i, csiColor->components[i]);
 
     NSColor *color;
 
