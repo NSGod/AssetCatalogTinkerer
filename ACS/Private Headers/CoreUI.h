@@ -110,6 +110,9 @@ struct _csicolor {
 @property (nonatomic, readonly) NSData *data;
 @property (nonatomic, readonly) CGImageRef unslicedImage;
 @property (nonatomic, readonly) CGPDFDocumentRef pdfDocument;
+
+@property (nonatomic, readonly) BOOL substituteWithSystemColor;
+@property (nonatomic, readonly) NSString *systemColorName;
 @property (nonatomic, readonly) const struct _csicolor *csiColor;
 @property (nonatomic, readonly) unsigned long long colorSpaceID;
 

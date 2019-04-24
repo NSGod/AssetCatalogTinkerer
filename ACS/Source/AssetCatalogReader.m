@@ -287,7 +287,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
 
                 [self.mutableImages addObject:desc];
             } else if (rendition.csiColor) {
-                NSDictionary *desc = [self imageDescriptionWithName:rendition.name csiColor:rendition.csiColor colorSpaceID:rendition.colorSpaceID];
+                NSDictionary *desc = [self imageDescriptionWithColorRendition:rendition];
 
                 if (desc)
                     [self.mutableImages addObject:desc];
@@ -430,16 +430,25 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
     return @{};
 }
 
-- (NSDictionary *)imageDescriptionWithName:(NSString *)name csiColor:(const struct _csicolor *)csiColor colorSpaceID:(unsigned long long)colorSpaceID
+- (NSDictionary *)imageDescriptionWithColorRendition:(CUIThemeRendition *)rendition
 {
-    unsigned count = csiColor->componentCount;
 
-    NSColor *color;
 
-    if (count == 4) { // RGBA
-        color = [NSColor colorWithRed:csiColor->components[0] green:csiColor->components[1] blue:csiColor->components[2] alpha:csiColor->components[3]];
-    } else if (count == 2) { // grayscale w/alpha
-        color = [NSColor colorWithWhite:csiColor->components[0] alpha:csiColor->components[1]];
+    NSColor *color = nil;
+
+    if (rendition.substituteWithSystemColor) {
+        NSString *colorName = rendition.systemColorName;
+        NSColorList *systemList = [NSColorList colorListNamed:@"System"];
+        color = [systemList colorWithKey:colorName];
+    } else {
+        const struct _csicolor *csiColor = rendition.csiColor;
+        unsigned count = csiColor->componentCount;
+
+        if (count == 4) { // RGBA
+            color = [NSColor colorWithRed:csiColor->components[0] green:csiColor->components[1] blue:csiColor->components[2] alpha:csiColor->components[3]];
+        } else if (count == 2) { // grayscale w/alpha
+            color = [NSColor colorWithWhite:csiColor->components[0] alpha:csiColor->components[1]];
+        }
     }
 
     if (!color)
@@ -467,7 +476,7 @@ NSString * const kAssetCatalogReaderErrorDomain = @"br.com.guilhermerambo.AssetC
     }];
 
     return @{
-             kACSNameKey: name,
+             kACSNameKey: rendition.name,
              kACSThumbnailKey: thumbnail,
              kACSColorKey: color
              };
