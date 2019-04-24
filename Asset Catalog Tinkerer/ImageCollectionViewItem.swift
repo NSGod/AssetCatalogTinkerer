@@ -180,6 +180,9 @@ class ImageCollectionViewItem: NSCollectionViewItem {
         } else if imageData["pdf"] != nil {
             typeView.stringValue = "PDF"
             typeView.backgroundColor = .systemRed
+        } else if imageData["color"] != nil {
+            typeView.stringValue = "Color"
+            typeView.backgroundColor = .systemPurple
         } else {
             typeView.stringValue = "?"
             typeView.backgroundColor = .systemGray
